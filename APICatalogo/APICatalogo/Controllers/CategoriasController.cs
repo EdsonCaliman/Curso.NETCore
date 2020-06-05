@@ -29,12 +29,13 @@ namespace APICatalogo.Controllers
         }
 
         [HttpGet("produtos")]
+        [HttpGet("/produtos")]
         public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
         {
             return _context.Categorias.Include(x => x.Produtos).ToList();
         }
 
-        [HttpGet("{id}", Name = "ObterCategoria")]
+        [HttpGet("{id:min(1)}", Name = "ObterCategoria")]
         public ActionResult<Categoria> GetId(int id)
         {
             var categoria = _context.Categorias.AsNoTracking().FirstOrDefault(x => x.CategoriaId == id);
