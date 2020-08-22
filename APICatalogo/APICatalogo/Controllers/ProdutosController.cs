@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,6 +31,7 @@ namespace APICatalogo.Controllers
         [HttpGet("{id}", Name ="ObterProduto")]
         public async Task<ActionResult<Produto>> GetAsync(int id)
         {
+
             var produto = await _context.Produtos.AsNoTracking().FirstOrDefaultAsync(p => p.ProdutoId == id);
             if(produto == default)
             {
