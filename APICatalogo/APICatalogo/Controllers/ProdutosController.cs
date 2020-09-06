@@ -13,6 +13,7 @@ namespace APICatalogo.Controllers
 {
     [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[Controller]")]
+    //[EnableCors("PermitirRequestOutrasOrigens")]
     [ApiController]
     public class ProdutosController : ControllerBase
     {

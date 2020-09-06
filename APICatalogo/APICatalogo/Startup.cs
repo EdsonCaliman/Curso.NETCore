@@ -64,6 +64,15 @@ namespace APICatalogo
                          Encoding.UTF8.GetBytes(Configuration["Jwt:key"]))
                  });
 
+            //services.AddCors(opt =>
+            //{
+            //    opt.AddPolicy("PermitirRequestOutrasOrigens",
+            //        builder => builder.WithOrigins("").WithMethods("GET")
+            //        );
+            //});
+
+            services.AddCors();
+
             services.AddControllers().AddNewtonsoftJson(options => 
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
@@ -86,6 +95,9 @@ namespace APICatalogo
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            //app.UseCors(opt => opt.WithOrigins("https://www.apirequest.io/"));
+            app.UseCors(opt => opt.AllowAnyOrigin());
 
             app.UseAuthentication();
 
