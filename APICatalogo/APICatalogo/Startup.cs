@@ -5,6 +5,7 @@ using APICatalogo.Filters;
 using APICatalogo.Logging;
 using APICatalogo.Repository;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +14,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace APICatalogo
 {
@@ -44,8 +47,23 @@ namespace APICatalogo
             
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
-                .AddDefaultTokenProviders();           
-            
+                .AddDefaultTokenProviders();
+
+            services.AddAuthentication(
+                JwtBearerDefaults.AuthenticationScheme).
+                AddJwtBearer(options =>
+                 options.TokenValidationParameters = new TokenValidationParameters
+                 {
+                     ValidateIssuer = true,
+                     ValidateAudience = true,
+                     ValidateLifetime = true,
+                     ValidAudience = Configuration["TokenConfiguration:Audience"],
+                     ValidIssuer = Configuration["TokenConfiguration:Issuer"],
+                     ValidateIssuerSigningKey = true,
+                     IssuerSigningKey = new SymmetricSecurityKey(
+                         Encoding.UTF8.GetBytes(Configuration["Jwt:key"]))
+                 });
+
             services.AddControllers().AddNewtonsoftJson(options => 
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
