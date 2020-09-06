@@ -13,16 +13,22 @@ namespace APICatalogo.Models
     {
         [Key]
         public int ProdutoId { get; set; }
+
         [Required(ErrorMessage ="O nome é obrigatório")]
         [MaxLength(80)]
         [PrimeiraLetraMaiusculaAttribute]
         public string Nome { get; set; }
+
         [Required(ErrorMessage = "A descrição é obrigatória")]
         [MaxLength(300)]
         public string Descricao { get; set; }
+
         [Required(ErrorMessage = "O preço é obrigatório")]
+        [DataType(DataType.Currency)]
+        [Column(TypeName = "decimal(8,2)")]
         [Range(1, 10000, ErrorMessage ="O preço deve estar entre {1} e {2}")]
         public decimal Preco { get; set; }
+
         [Required]
         [MaxLength(500)]
         public string ImagemUrl { get; set; }
