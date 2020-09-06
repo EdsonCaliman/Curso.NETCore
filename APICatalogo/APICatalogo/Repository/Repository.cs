@@ -1,8 +1,9 @@
 ﻿using APICatalogo.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace APICatalogo.Repository
 {
@@ -29,9 +30,9 @@ namespace APICatalogo.Repository
             return _contexto.Set<T>().AsNoTracking();
         }
 
-        public T GetById(Expression<Func<T, bool>> predicate)
+        public async Task<T> GetById(Expression<Func<T, bool>> predicate)
         {
-            return _contexto.Set<T>().SingleOrDefault(predicate);
+            return await _contexto.Set<T>().SingleOrDefaultAsync(predicate);
         }
 
         public void Update(T entity)

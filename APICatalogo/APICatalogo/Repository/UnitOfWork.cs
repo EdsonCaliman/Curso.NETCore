@@ -1,7 +1,4 @@
 ﻿using APICatalogo.Context;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace APICatalogo.Repository
@@ -32,9 +29,9 @@ namespace APICatalogo.Repository
             }
         }
 
-        public void Commit()
+        public async Task Commit()
         {
-            _contexto.SaveChanges();
+            await _contexto.SaveChangesAsync();
         }
 
         public void Dispose()

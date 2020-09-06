@@ -3,9 +3,10 @@ using APICatalogo.Models;
 using APICatalogo.Repository;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace APICatalogo.Controllers
 {
@@ -26,9 +27,9 @@ namespace APICatalogo.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<CategoriaDTO>> GetAll()
+        public async Task<ActionResult<IEnumerable<CategoriaDTO>>> GetAll()
         {
-            var categorias = _uof.CategoriaRepository.Get().ToList();
+            var categorias = await _uof.CategoriaRepository.Get().ToListAsync();
             var categoriasDTO = _mapper.Map<List<CategoriaDTO>>(categorias);
 
             return categoriasDTO;
@@ -36,20 +37,20 @@ namespace APICatalogo.Controllers
 
         [HttpGet("produtos")]
         [HttpGet("/produtos")]
-        public ActionResult<IEnumerable<CategoriaDTO>> GetCategoriasProdutos()
+        public async Task<ActionResult<IEnumerable<CategoriaDTO>>> GetCategoriasProdutos()
         {
             _logger.LogInformation("============GET api/categorias/produtos==================");
 
-            var categorias = _uof.CategoriaRepository.GetCategoriasProdutos().ToList();
+            var categorias = await _uof.CategoriaRepository.GetCategoriasProdutos();
             var categoriasDTO = _mapper.Map<List<CategoriaDTO>>(categorias);
 
             return categoriasDTO;
         }
 
         [HttpGet("{id:min(1)}", Name = "ObterCategoria")]
-        public ActionResult<CategoriaDTO> GetId(int id)
+        public async Task<ActionResult<CategoriaDTO>> GetId(int id)
         {
-            var categoria = _uof.CategoriaRepository.GetById(x => x.CategoriaId == id);
+            var categoria = await _uof.CategoriaRepository.GetById(x => x.CategoriaId == id);
 
             if (categoria == default)
             {
@@ -62,12 +63,12 @@ namespace APICatalogo.Controllers
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody] CategoriaDTO categoriaDto)
+        public async Task<ActionResult> Post([FromBody] CategoriaDTO categoriaDto)
         {
             var categoria = _mapper.Map<Categoria>(categoriaDto);
 
             _uof.CategoriaRepository.Add(categoria);
-            _uof.Commit();
+            await _uof.Commit();
 
             var categoriaDTO = _mapper.Map<CategoriaDTO>(categoria);
 
@@ -75,7 +76,7 @@ namespace APICatalogo.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] CategoriaDTO categoriaDto)
+        public async Task<ActionResult> Put(int id, [FromBody] CategoriaDTO categoriaDto)
         {
             if (id != categoriaDto.CategoriaId)
             {
@@ -85,15 +86,14 @@ namespace APICatalogo.Controllers
             var categoria = _mapper.Map<Categoria>(categoriaDto);
 
             _uof.CategoriaRepository.Update(categoria);
-            _uof.Commit();
+            await _uof.Commit();
             return Ok();
-
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<CategoriaDTO> Delete(int id)
+        public async Task<ActionResult<CategoriaDTO>> Delete(int id)
         {
-            var categoria = _uof.CategoriaRepository.GetById(cat => cat.CategoriaId == id);
+            var categoria = await _uof.CategoriaRepository.GetById(cat => cat.CategoriaId == id);
 
             if (categoria == default)
             {
@@ -101,7 +101,7 @@ namespace APICatalogo.Controllers
             }
 
             _uof.CategoriaRepository.Delete(categoria);
-            _uof.Commit();
+            await _uof.Commit();
 
             var categoriaDTO = _mapper.Map<CategoriaDTO>(categoria);
 
