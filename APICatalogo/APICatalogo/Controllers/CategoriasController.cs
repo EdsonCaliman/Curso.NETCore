@@ -3,6 +3,7 @@ using APICatalogo.Models;
 using APICatalogo.Repository;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace APICatalogo.Controllers
 {
+    [Produces("application/json")]
     [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[Controller]")]
     [ApiController]
@@ -49,6 +51,13 @@ namespace APICatalogo.Controllers
             return categoriasDTO;
         }
 
+        /// <summary>
+        /// Obtem uma Categoria pelo seu Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Retorna uma categoria</returns>
+        [ProducesResponseType(typeof(CategoriaDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("{id:min(1)}", Name = "ObterCategoria")]
         public async Task<ActionResult<CategoriaDTO>> GetId(int id)
         {
@@ -78,6 +87,8 @@ namespace APICatalogo.Controllers
         }
 
         [HttpPut("{id}")]
+        [ApiConventionMethod(typeof(DefaultApiConventions),
+            nameof(DefaultApiConventions.Put))]
         public async Task<ActionResult> Put(int id, [FromBody] CategoriaDTO categoriaDto)
         {
             if (id != categoriaDto.CategoriaId)
@@ -89,7 +100,7 @@ namespace APICatalogo.Controllers
 
             _uof.CategoriaRepository.Update(categoria);
             await _uof.Commit();
-            return Ok();
+            return NoContent();
         }
 
         [HttpDelete("{id}")]

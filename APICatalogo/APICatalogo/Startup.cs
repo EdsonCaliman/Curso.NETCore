@@ -16,6 +16,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace APICatalogo
@@ -81,6 +86,66 @@ namespace APICatalogo
                 options.ReportApiVersions = true;
             });
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "CatalogoAPI",
+                    Description = "Catálogo de Produtos e Categorias",
+                    TermsOfService = new Uri("https://edsoncaliman.net/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "edsoncaliman",
+                        Email = "edsoncaliman@yahoo.com",
+                        Url = new Uri("https://www.edsoncaliman.net"),
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "Usar sobre LICX",
+                        Url = new Uri("https://edsoncaliman.net/license"),
+                    }
+                 });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+
+                var security = new Dictionary<string, IEnumerable<string>>
+                {
+                    {"Bearer", new string[] { }},
+                };
+
+                c.AddSecurityDefinition(
+                   "Bearer",
+                   new ApiKeyScheme
+                   {
+                       In = "header",
+                       Description = "Copiar 'bearer ' + token'",
+                       Name = "Authorization",
+                       Type = "apiKey"
+                   });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+
+                        },
+                        new List<string>()
+                    }
+                });
+            });
+
             services.AddControllers().AddNewtonsoftJson(options => 
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
@@ -110,6 +175,13 @@ namespace APICatalogo
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json","API v1");
+            });
 
             app.UseEndpoints(endpoints =>
             {

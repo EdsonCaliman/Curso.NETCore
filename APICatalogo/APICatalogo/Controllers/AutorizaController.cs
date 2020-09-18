@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace APICatalogo.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     public class AutorizaController : ControllerBase
@@ -27,12 +28,22 @@ namespace APICatalogo.Controllers
             _configuration = configuration;
         }
 
+        /// <summary>
+        /// Define se a api está acessível
+        /// </summary>
+        /// <returns>Retorna uma mensagem com a data de acesso</returns>
         [HttpGet]
         public ActionResult<string> Get()
         {
             return "AutorizaController :: Acessado em :" + DateTime.Now.ToLongDateString();
         }
 
+        /// <summary>
+        /// Registra um usuário para acesso a aplicação
+        /// </summary>
+        /// <param name="usuarioDTO">Recebe um objeto do tipo UsuarioDTO</param>
+        /// <returns>Status 200 e o token para acesso</returns>
+        /// <remarks>retorna o status 200 e o token para o novo usuário</remarks>
         [HttpPost("register")]
         public async Task<ActionResult> RegisterUser([FromBody] UsuarioDTO usuarioDTO)
         {
