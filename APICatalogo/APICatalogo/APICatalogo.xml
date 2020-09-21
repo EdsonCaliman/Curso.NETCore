@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>APICatalogo</name>
+    </assembly>
+    <members>
+        <member name="M:APICatalogo.Controllers.AutorizaController.Get">
+            <summary>
+            Define se a api está acessível
+            </summary>
+            <returns>Retorna uma mensagem com a data de acesso</returns>
+        </member>
+        <member name="M:APICatalogo.Controllers.AutorizaController.RegisterUser(APICatalogo.DTOs.UsuarioDTO)">
+            <summary>
+            Registra um usuário para acesso a aplicação
+            </summary>
+            <param name="usuarioDTO">Recebe um objeto do tipo UsuarioDTO</param>
+            <returns>Status 200 e o token para acesso</returns>
+            <remarks>retorna o status 200 e o token para o novo usuário</remarks>
+        </member>
+        <member name="M:APICatalogo.Controllers.CategoriasController.GetId(System.Int32)">
+            <summary>
+            Obtem uma Categoria pelo seu Id
+            </summary>
+            <param name="id"></param>
+            <returns>Retorna uma categoria</returns>
+        </member>
+    </members>
+</doc>
