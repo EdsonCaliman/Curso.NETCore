@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace APICatalogo.Controllers
@@ -35,6 +37,21 @@ namespace APICatalogo.Controllers
         {
             var categorias = await _uof.CategoriaRepository.Get().ToListAsync();
             var categoriasDTO = _mapper.Map<List<CategoriaDTO>>(categorias);
+
+            return categoriasDTO;
+        }
+
+        [HttpGet("paginacao")]
+        public ActionResult<IEnumerable<CategoriaDTO>> GetPaginacao(int pag=1, int reg=5)
+        {
+            var categorias = _uof.CategoriaRepository.LocalizaPagina<Categoria>(pag, reg).ToList();
+            var categoriasDTO = _mapper.Map<List<CategoriaDTO>>(categorias);
+
+            var totalDeRegistros = _uof.CategoriaRepository.GetTotalRegistros();
+            var numeroPaginas = ((int)Math.Ceiling((double)totalDeRegistros / reg));
+
+            Response.Headers["X-Total-Registros"] = totalDeRegistros.ToString();
+            Response.Headers["X-Numero-Paginas"] = numeroPaginas.ToString();
 
             return categoriasDTO;
         }
